@@ -1,28 +1,22 @@
-#ifndef __MATRIX_HPP__
-#define __MATRIX_HPP__
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
 
-#include <cstdint>
 #include <vector>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
 
+template<typename T>
 class Matrix {
 private:
-    std::vector<std::vector<int>> data;
+    std::vector<std::vector<T>> data;
     std::size_t size;
 
 public:
-    //constructor with size
-    Matrix(std::size_t N) : size(N), data(N, std::vector<int>(N, 0)) {}
+    Matrix(std::size_t N) : size(N), data(N, std::vector<T>(N, 0)) {}
+    Matrix(const std::vector<std::vector<T>>& nums) : data(nums), size(nums.size()) {}
 
-    //constructor with predefined values
-    Matrix(std::vector<std::vector<int>> nums) : data(nums), size(nums.size()) {}
-
-    //matrix addition
     Matrix operator+(const Matrix &rhs) const {
-        if (size != rhs.size)
-            throw std::invalid_argument("Matrix sizes must match for addition.");
         Matrix result(size);
         for (std::size_t i = 0; i < size; ++i)
             for (std::size_t j = 0; j < size; ++j)
@@ -30,10 +24,7 @@ public:
         return result;
     }
 
-    //matrix multiplication
     Matrix operator*(const Matrix &rhs) const {
-        if (size != rhs.size)
-            throw std::invalid_argument("Matrix sizes must match for multiplication.");
         Matrix result(size);
         for (std::size_t i = 0; i < size; ++i)
             for (std::size_t j = 0; j < size; ++j)
@@ -42,48 +33,37 @@ public:
         return result;
     }
 
-    //setting a value in the matrix
-    void set_value(std::size_t i, std::size_t j, int n) {
-        if (i >= size || j >= size)
-            throw std::out_of_range("Index out of bounds");
-        data[i][j] = n;
+    void set_value(std::size_t i, std::size_t j, T n) {
+        data.at(i).at(j) = n;
     }
 
-    //getting a value from the matrix
-    int get_value(std::size_t i, std::size_t j) const {
-        if (i >= size || j >= size)
-            throw std::out_of_range("Index out of bounds");
-        return data[i][j];
+    T get_value(std::size_t i, std::size_t j) const {
+        return data.at(i).at(j);
     }
 
-    //getting size of the matrix
     int get_size() const {
         return static_cast<int>(size);
     }
 
-    //sum of main diagonal 
-    int sum_diagonal_major() const {
-        int sum = 0;
+    T sum_diagonal_major() const {
+        T sum = 0;
         for (std::size_t i = 0; i < size; ++i)
             sum += data[i][i];
         return sum;
     }
 
-    //sum of secondary diagonal 
-    int sum_diagonal_minor() const {
-        int sum = 0;
+    T sum_diagonal_minor() const {
+        T sum = 0;
         for (std::size_t i = 0; i < size; ++i)
             sum += data[i][size - 1 - i];
         return sum;
     }
 
-    //swaping two rows
     void swap_rows(std::size_t r1, std::size_t r2) {
         if (r1 < size && r2 < size)
             std::swap(data[r1], data[r2]);
     }
 
-    //swapping two columns
     void swap_cols(std::size_t c1, std::size_t c2) {
         if (c1 < size && c2 < size) {
             for (std::size_t i = 0; i < size; ++i)
@@ -91,14 +71,13 @@ public:
         }
     }
 
-    //printing matrix nicely
     void print_matrix() const {
         for (const auto& row : data) {
-            for (int val : row)
+            for (const auto& val : row)
                 std::cout << std::setw(6) << val;
             std::cout << "\n";
         }
     }
 };
 
-#endif // __MATRIX_HPP__
+#endif
